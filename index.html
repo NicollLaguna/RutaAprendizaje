@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ruta de Aprendizaje — IA × Ciberseguridad</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --surface2: #1a1a24;
+      --border: rgba(255,255,255,0.07);
+      --border2: rgba(255,255,255,0.13);
+      --text: #e8e6f0;
+      --muted: #7a7890;
+      --accent: #7c6af7;
+      --accent2: #4fd1b0;
+      --accent3: #f76c6a;
+      --accent4: #f9c74f;
+      --ai: rgba(124,106,247,0.15);
+      --ai-t: #a89cfa;
+      --sec: rgba(247,108,106,0.15);
+      --sec-t: #fa9b9a;
+      --web: rgba(79,209,176,0.15);
+      --web-t: #5de8c5;
+      --mob: rgba(249,199,79,0.15);
+      --mob-t: #fbd36a;
+      --font: 'Space Grotesk', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(124,106,247,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,106,247,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      position: relative;
+      padding: 80px 24px 60px;
+      text-align: center;
+      z-index: 1;
+    }
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border: 1px solid rgba(124,106,247,0.4);
+      border-radius: 100px;
+      font-size: 12px;
+      color: var(--ai-t);
+      background: var(--ai);
+      letter-spacing: 0.5px;
+      margin-bottom: 24px;
+      font-family: var(--mono);
+    }
+    .header-badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+    h1 {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .header-sub {
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 520px;
+      margin: 0 auto 40px;
+    }
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .stat-pill {
+      padding: 8px 20px;
+      border: 1px solid var(--border2);
+      border-radius: 100px;
+      font-size: 13px;
+      color: var(--muted);
+      background: var(--surface);
+    }
+    .stat-pill strong { color: var(--text); }
+
+    /* ─── MAIN LAYOUT ─── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── PHASE NAV TABS ─── */
+    .phase-nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+    .phase-btn {
+      padding: 8px 18px;
+      border-radius: 100px;
+      border: 1px solid var(--border2);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 13px;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .phase-btn:hover { border-color: var(--accent); color: var(--text); }
+    .phase-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 500;
+    }
+
+    /* ─── PROGRESS BAR ─── */
+    .progress-track {
+      height: 2px;
+      background: var(--border);
+      border-radius: 1px;
+      margin-bottom: 40px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 1px;
+      transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ─── PHASE PANEL ─── */
+    .phase-panel { display: none; animation: fadeUp 0.3s ease; }
+    .phase-panel.active { display: block; }
+    @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+
+    .phase-hero {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 40px;
+      padding: 28px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius);
+    }
+    .phase-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+    }
+    .phase-title { font-size: 22px; font-weight: 600; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .phase-sub { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 14px; }
+    .domain-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .dtag {
+      padding: 3px 12px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-family: var(--mono);
+      font-weight: 500;
+    }
+    .dtag.ai { background: var(--ai); color: var(--ai-t); }
+    .dtag.sec { background: var(--sec); color: var(--sec-t); }
+    .dtag.web { background: var(--web); color: var(--web-t); }
+    .dtag.mob { background: var(--mob); color: var(--mob-t); }
+
+    /* ─── SECTION LABEL ─── */
+    .section-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ─── SKILLS GRID ─── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color 0.2s;
+    }
+    .skill-card:hover { border-color: var(--border2); }
+    .skill-card h4 {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .skill-card p { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+    .skill-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+
+    /* ─── TWO-COL ─── */
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 36px;
+    }
+
+    /* ─── RESOURCES ─── */
+    .resources-list { list-style: none; }
+    .resources-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .resources-list li:last-child { border-bottom: none; }
+    .resources-list li::before {
+      content: '→';
+      color: var(--accent);
+      flex-shrink: 0;
+      font-family: var(--mono);
+      font-size: 12px;
+      margin-top: 1px;
+    }
+
+    /* ─── CERTS ─── */
+    .cert-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      margin-bottom: 10px;
+      transition: border-color 0.2s;
+    }
+    .cert-item:hover { border-color: var(--border2); }
+    .cert-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--ai);
+      border: 1px solid rgba(124,106,247,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .cert-name { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+    .cert-org { font-size: 12px; color: var(--muted); }
+
+    /* ─── PROJECTS ─── */
+    .projects-list { margin-bottom: 36px; }
+    .project-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .project-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .project-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .project-title { font-size: 15px; font-weight: 600; color: var(--text); }
+    .project-arrow { color: var(--muted); font-size: 18px; flex-shrink: 0; transition: transform 0.2s; }
+    .project-card:hover .project-arrow { transform: translate(2px,-2px); color: var(--accent); }
+    .project-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 12px; }
+    .stack-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .stag {
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 11px;
+      font-family: var(--mono);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .stag.ai { background: var(--ai); color: var(--ai-t); border-color: transparent; }
+    .stag.sec { background: var(--sec); color: var(--sec-t); border-color: transparent; }
+    .stag.web { background: var(--web); color: var(--web-t); border-color: transparent; }
+    .stag.mob { background: var(--mob); color: var(--mob-t); border-color: transparent; }
+
+    /* ─── TIMELINE INDICATOR ─── */
+    .timeline-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+    .timeline-meta::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .timeline-meta span { color: var(--border2); margin: 0 4px; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--muted);
+      font-size: 13px;
+      font-family: var(--mono);
+      border-top: 1px solid var(--border);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 3px; }
+
+    @media (max-width: 600px) {
+      header { padding: 48px 16px 40px; }
+      .phase-hero { grid-template-columns: 1fr; }
+      .phase-icon-wrap { width: 48px; height: 48px; font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-badge"><span></span> Ruta de aprendizaje personalizada · 2025–2026</div>
+  <h1>IA × Seguridad<br><em>Un sistema, no silos</em></h1>
+  <p class="header-sub">Ruta diseñada para una desarrolladora polímata que integra web, móvil, ciberseguridad e inteligencia artificial en cada etapa.</p>
+  <div class="stats-row">
+    <div class="stat-pill"><strong>5</strong> fases</div>
+    <div class="stat-pill"><strong>18</strong> meses</div>
+    <div class="stat-pill"><strong>8</strong> certificaciones</div>
+    <div class="stat-pill"><strong>10</strong> proyectos</div>
+    <div class="stat-pill"><strong>4</strong> dominios</div>
+  </div>
+</header>
+
+<main>
+  <div class="phase-nav" id="nav"></div>
+  <div class="progress-track"><div class="progress-fill" id="progress" style="width:20%"></div></div>
+  <div id="panels"></div>
+</main>
+
+<footer>// nicolllaguna · ruta-aprendizaje · 2025</footer>
+
+<script>
+const phases = [
+  {
+    id:1, label:"01 · Fusión", title:"Fundamentos de fusión", duration:"Semanas 1–6", icon:"⚡",
+    sub:"Unifica tus bases: aprende a pensar en los cuatro dominios simultáneamente. El objetivo no es repasar, sino reconectar lo que ya sabes bajo una nueva lente integrada.",
+    domains:["ai","web","sec","mob"],
+    skills:[
+      {title:"Threat modeling en apps web/móvil",desc:"Aplica STRIDE y PASTA a arquitecturas que ya conoces. Crea modelos de amenaza para una app React y una Flutter.",tags:["sec","web","mob"]},
+      {title:"MLOps & seguridad del pipeline de IA",desc:"Aprende cómo los modelos de ML pueden ser atacados (adversarial, data poisoning) desde el primer día.",tags:["ai","sec"]},
+      {title:"Zero Trust para APIs modernas",desc:"Diseña APIs con autenticación sin perímetro, tokens de corta duración y validación continua.",tags:["web","sec"]}
+    ],
+    resources:[
+      "OWASP WSTG v4.2 + OWASP ML Security Top 10",
+      "Hands-On Machine Learning with Scikit-Learn (cap. 1–5)",
+      "Secure by Design — Dan Bergh Johnsson (libro)",
+      "Stanford CS329S — Machine Learning Systems Design",
+      "TryHackMe: Pre-Security + Jr Penetration Tester paths"
+    ],
+    certs:[
+      {icon:"🔐",name:"CompTIA Security+",org:"CompTIA — Base universal de ciberseguridad"},
+      {icon:"🧠",name:"Google AI Essentials",org:"Google — Fundamentos prácticos de IA"}
+    ],
+    projects:[
+      {title:"SecureHub CLI",desc:"Herramienta de análisis estático de código que usa un modelo de lenguaje local (Ollama + Llama 3) para detectar vulnerabilidades en repos.",stack:["Python","Ollama","ai","sec"]},
+      {title:"Threat Model Visualizer",desc:"App web que toma una arquitectura en YAML y genera automáticamente un diagrama de amenazas con sugerencias de mitigación.",stack:["React","FastAPI","web","sec"]}
+    ]
+  },
+  {
+    id:2, label:"02 · Detección", title:"IA defensiva & detección", duration:"Semanas 7–14", icon:"🛡️",
+    sub:"Construye sistemas de detección de amenazas con machine learning. Aprende a distinguir anomalías reales de falsos positivos — el mayor reto en SOC moderno.",
+    domains:["ai","sec"],
+    skills:[
+      {title:"Detección de anomalías con ML",desc:"Isolation Forest, Autoencoders, y LSTM para detección de intrusiones en tiempo real sobre logs de red.",tags:["ai","sec"]},
+      {title:"NLP para análisis de logs y phishing",desc:"Fine-tuning de modelos de lenguaje para clasificar emails maliciosos y generar alertas contextuales.",tags:["ai","sec"]},
+      {title:"SIEM augmentado con IA",desc:"Integra modelos de ML en pipelines de Elastic Stack o Splunk para priorización inteligente de alertas.",tags:["ai","sec","web"]}
+    ],
+    resources:[
+      "Malware Data Science — Hillary Sanders & Joshua Saxe",
+      "Machine Learning for Cybersecurity Cookbook — Packt",
+      "Kaggle: UNSW-NB15 Dataset + KDD Cup 99",
+      "Elastic: Detección con ML (documentación oficial)",
+      "Papers: DeepLog, Kitsune Network Anomaly Detection"
+    ],
+    certs:[
+      {icon:"🤖",name:"AWS Certified Machine Learning – Specialty",org:"Amazon — Despliegue de modelos en producción"},
+      {icon:"🔍",name:"Certified SOC Analyst (CSA)",org:"EC-Council — Operaciones de seguridad"}
+    ],
+    projects:[
+      {title:"PhishNet AI",desc:"Sistema de detección de phishing en tiempo real: extensión de Chrome + API backend con modelo fine-tuned de BERT.",stack:["Python","HuggingFace","mob","ai","sec"]},
+      {title:"LogWhisperer",desc:"Dashboard web que analiza logs del sistema con un LLM y los convierte en lenguaje natural con scoring de riesgo.",stack:["React","FastAPI","Elasticsearch","ai","sec","web"]}
+    ]
+  },
+  {
+    id:3, label:"03 · Apps IA", title:"Apps seguras con IA embebida", duration:"Semanas 15–26", icon:"📱",
+    sub:"Fusiona web y móvil con IA generativa. Construye productos donde la IA es una característica central y la seguridad es arquitectural, no cosmética.",
+    domains:["ai","web","mob","sec"],
+    skills:[
+      {title:"RAG seguro para apps empresariales",desc:"Diseña sistemas RAG con control de acceso granular: el modelo solo responde con información que el usuario tiene permiso de ver.",tags:["ai","web","sec"]},
+      {title:"On-device AI en móvil",desc:"Corre modelos de ML directamente en el dispositivo con Core ML (iOS) y ML Kit (Android) sin exponer datos a la nube.",tags:["ai","mob","sec"]},
+      {title:"Autenticación biométrica + IA",desc:"Implementa reconocimiento facial/voz como segundo factor con modelos on-device y protección contra ataques de presentación.",tags:["ai","mob","sec"]}
+    ],
+    resources:[
+      "Building LLM Apps — Valentina Alto (O'Reilly 2024)",
+      "Apple Core ML documentation + WWDC sessions",
+      "LangChain + LlamaIndex (documentación oficial)",
+      "OWASP Mobile Application Security Testing Guide (MASTG)",
+      "DeepLearning.AI — LangChain for LLM App Development"
+    ],
+    certs:[
+      {icon:"📱",name:"Certified Mobile App Penetration Tester",org:"MCSA — Seguridad móvil ofensiva"},
+      {icon:"☁️",name:"Google Professional ML Engineer",org:"Google Cloud — ML en producción"}
+    ],
+    projects:[
+      {title:"PrivateDoc AI",desc:"App móvil (Flutter) + web que permite chatear con documentos sensibles. Los embeddings se generan on-device, nada sale del dispositivo.",stack:["Flutter","Core ML","LlamaIndex","ai","mob","sec"]},
+      {title:"SecureVault Biometric",desc:"Sistema de autenticación multifactor con análisis de comportamiento que aprende el perfil del usuario y detecta impostores.",stack:["React Native","TensorFlow Lite","FastAPI","ai","mob","sec"]}
+    ]
+  },
+  {
+    id:4, label:"04 · Red Team", title:"Red Team & IA ofensiva", duration:"Semanas 27–38", icon:"⚔️",
+    sub:"Aprende a atacar para defender mejor. Comprende cómo los adversarios usan IA en sus campañas y cómo tus sistemas pueden ser subvertidos.",
+    domains:["ai","sec"],
+    skills:[
+      {title:"Ataques adversariales contra modelos",desc:"Genera ejemplos adversariales (FGSM, PGD, C&W) que engañan clasificadores. Aprende a diseñar modelos robustos.",tags:["ai","sec"]},
+      {title:"Prompt injection & jailbreaking",desc:"Técnicas de ataque contra LLMs en producción: indirect injection, jailbreaks, data exfiltration vía prompts. Diseña guardrails efectivos.",tags:["ai","sec"]},
+      {title:"Automated pentesting con IA",desc:"Usa agentes de IA (LangChain Agents) para automatizar reconocimiento, enumeración y explotación controlada.",tags:["ai","sec","web"]}
+    ],
+    resources:[
+      "The Art of Attack — Maxie Reynolds",
+      "Adversarial Robustness Toolbox (IBM ART) — documentación",
+      "Hack The Box Academy: CPTS path completo",
+      "Papers: Universal Adversarial Perturbations, Prompt Injection survey 2024",
+      "Penetration Testing — Georgia Weidman"
+    ],
+    certs:[
+      {icon:"💀",name:"Offensive Security Certified Professional (OSCP)",org:"OffSec — La certificación más respetada en pentesting"},
+      {icon:"🎯",name:"Certified Red Team Professional (CRTP)",org:"Altered Security — Active Directory attacks"}
+    ],
+    projects:[
+      {title:"LLM Red Team Framework",desc:"Suite de herramientas para testear automáticamente la resistencia de aplicaciones LLM contra prompt injection y leakage.",stack:["Python","OpenAI API","Anthropic API","ai","sec"]},
+      {title:"AI-Powered Recon Agent",desc:"Agente autónomo de reconocimiento para bug bounty que combina OSINT con análisis semántico para priorizar objetivos.",stack:["LangChain","Python","Shodan API","ai","sec"]}
+    ]
+  },
+  {
+    id:5, label:"05 · Arquitecta", title:"Arquitecto de sistemas seguros", duration:"Semanas 39–72", icon:"🏛️",
+    sub:"Integración total. Diseña, construye y lidera sistemas complejos que fusionan todos tus dominios. Esta fase no termina: es tu modo de operar permanente.",
+    domains:["ai","web","mob","sec"],
+    skills:[
+      {title:"Arquitectura Zero Trust para sistemas de IA",desc:"Diseña infraestructuras donde ningún componente recibe confianza implícita. Segmentación, verificación continua.",tags:["ai","sec","web"]},
+      {title:"AI Safety & Alignment aplicado",desc:"Técnicas de RLHF, Constitutional AI y red-teaming para sistemas de IA en producción. Ética técnica.",tags:["ai","sec"]},
+      {title:"Liderazgo técnico & threat intelligence",desc:"Crea programas de seguridad, gestiona equipos de respuesta, diseña feeds de threat intel con IA para anticipar amenazas.",tags:["ai","sec","web","mob"]}
+    ],
+    resources:[
+      "Designing Secure Software — Loren Kohnfelder (Google)",
+      "Building Secure and Reliable Systems — Google SRE book",
+      "NIST AI Risk Management Framework (AI RMF)",
+      "MIT OpenCourseWare: 6.858 Computer Systems Security",
+      "The MLOps Community + AI Safety newsletters"
+    ],
+    certs:[
+      {icon:"🏆",name:"Certified Information Systems Security Professional (CISSP)",org:"ISC² — Estándar de oro en arquitectura de seguridad"},
+      {icon:"🧬",name:"Certified AI Security Professional (CAISP)",org:"CertNexus — Seguridad específica para sistemas de IA"}
+    ],
+    projects:[
+      {title:"Plataforma SecureAI-as-a-Service",desc:"Plataforma SaaS completa: API gateway con análisis de seguridad en tiempo real, dashboard de monitoreo con IA y app móvil.",stack:["React","Flutter","FastAPI","LangChain","ai","web","mob","sec"]},
+      {title:"AI Threat Intelligence Hub",desc:"Proyecto open-source que agrega feeds de threat intelligence, los analiza con LLMs y genera reportes accionables.",stack:["Python","React","PostgreSQL","HuggingFace","ai","sec","web"]}
+    ]
+  }
+];
+
+const domainLabel = {ai:"IA",sec:"Seguridad",web:"Web",mob:"Móvil"};
+
+function dtag(t){ return `<span class="dtag ${t}">${domainLabel[t]||t}</span>`; }
+function stag(t){ const known=['ai','sec','web','mob']; return `<span class="stag ${known.includes(t)?t:''}">${t}</span>`; }
+
+const nav = document.getElementById('nav');
+const panels = document.getElementById('panels');
+
+phases.forEach((p,i) => {
+  // nav button
+  const btn = document.createElement('button');
+  btn.className = 'phase-btn' + (i===0?' active':'');
+  btn.textContent = p.label;
+  btn.onclick = () => activate(i);
+  nav.appendChild(btn);
+
+  // panel
+  const div = document.createElement('div');
+  div.className = 'phase-panel' + (i===0?' active':'');
+  div.innerHTML = `
+    <div class="phase-hero">
+      <div class="phase-icon-wrap">${p.icon}</div>
+      <div>
+        <div class="phase-title">${p.title}</div>
+        <div class="phase-sub">${p.sub}</div>
+        <div class="domain-tags">${p.domains.map(dtag).join('')}</div>
+      </div>
+    </div>
+    <div class="timeline-meta">${p.duration} <span>·</span> ${p.projects.length} proyectos <span>·</span> ${p.certs.length} certificaciones objetivo</div>
+
+    <div class="section-label">// habilidades clave</div>
+    <div class="skills-grid">
+      ${p.skills.map(s=>`
+        <div class="skill-card">
+          <h4>${s.title}</h4>
+          <p>${s.desc}</p>
+          <div class="skill-tags">${s.tags.map(dtag).join('')}</div>
+        </div>`).join('')}
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="section-label">// recursos recomendados</div>
+        <ul class="resources-list">${p.resources.map(r=>`<li>${r}</li>`).join('')}</ul>
+      </div>
+      <div>
+        <div class="section-label">// certificaciones objetivo</div>
+        ${p.certs.map(c=>`
+          <div class="cert-item">
+            <div class="cert-icon">${c.icon}</div>
+            <div>
+              <div class="cert-name">${c.name}</div>
+              <div class="cert-org">${c.org}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="section-label">// proyectos prácticos</div>
+    <div class="projects-list">
+      ${p.projects.map(pr=>`
+        <div class="project-card">
+          <div class="project-header">
+            <div class="project-title">${pr.title}</div>
+            <div class="project-arrow">↗</div>
+          </div>
+          <div class="project-desc">${pr.desc}</div>
+          <div class="stack-tags">${pr.stack.map(stag).join('')}</div>
+        </div>`).join('')}
+    </div>
+  `;
+  panels.appendChild(div);
+});
+
+function activate(idx){
+  document.querySelectorAll('.phase-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  document.querySelectorAll('.phase-panel').forEach((c,i)=>c.classList.toggle('active',i===idx));
+  document.getElementById('progress').style.width = ((idx+1)/phases.length*100)+'%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
